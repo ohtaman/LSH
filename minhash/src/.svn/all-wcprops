@@ -1,0 +1,23 @@
+K 25
+svn:wc:ra_dav:version-url
+V 41
+/svn/colfil/!svn/ver/27/trunk/minhash/src
+END
+main.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 50
+/svn/colfil/!svn/ver/29/trunk/minhash/src/main.cpp
+END
+log4j.properties
+K 25
+svn:wc:ra_dav:version-url
+V 58
+/svn/colfil/!svn/ver/25/trunk/minhash/src/log4j.properties
+END
+makefile
+K 25
+svn:wc:ra_dav:version-url
+V 50
+/svn/colfil/!svn/ver/29/trunk/minhash/src/makefile
+END
