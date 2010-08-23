@@ -3,7 +3,7 @@
  * @author Ohtaman
  * @brief
  *
- * @date Sat Aug 21 23:41:51 2010 last updated
+ * @date Mon Aug 23 23:26:21 2010 last updated
  * @date Sat Aug 21 11:04:21 2010 created
  */
 
@@ -64,20 +64,20 @@ int main()
   logger->info("done");
 
 
-  map<Classifier::ClusterType, unsigned int> clusters;
+  map<pair<unsigned int, Classifier::ClusterType>, unsigned int> clusters;
   Classifier::ValueType tmpClusters;
   logger->info("clustering users");
   cout << "Clustering users ... " << flush;
   for (list<Classifier::ContainerType>::const_iterator ite = users.begin(); ite != users.end(); ++ite) {
     classifier.classify(*ite, &tmpClusters);
     for (Classifier::ValueType::const_iterator ite2 = tmpClusters.begin(); ite2 != tmpClusters.end(); ++ite2) {
-      clusters[ite2->first] += ite2->second;
-    }
+      clusters[pair<unsigned int, Classifier::ClusterType>(ite2->first, ite2->second)]++;
+    } 
   }
   cout << "O.K." << endl;
   logger->info("done");
 
-  for (map<Classifier::ClusterType, unsigned int>::const_iterator ite = clusters.begin(); ite != clusters.end(); ++ite) {
+  for (map<pair<unsigned int, Classifier::ClusterType>, unsigned int>::const_iterator ite = clusters.begin(); ite != clusters.end(); ++ite) {
     cout << ite->second << endl;
   }
   cout <<  "#clusters = " << clusters.size() << endl;

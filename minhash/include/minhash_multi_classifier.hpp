@@ -3,7 +3,7 @@
  * @author Ohtaman
  * @brief
  *
- * @date Sat Aug 21 22:01:22 2010 last updated
+ * @date Mon Aug 23 23:15:23 2010 last updated
  * @date Sat Aug 21 10:51:10 2010 created
  */
 
@@ -23,7 +23,7 @@ namespace colfil {
     typedef MinHashClassifier<N, MIN_HASH> ClassifierType;
     typedef typename ClassifierType::ValueType ClusterType;
     typedef typename ClassifierType::ContainerType ContainerType;
-    typedef std::map<typename ClassifierType::ValueType, unsigned int> ValueType;
+    typedef std::map<unsigned int, typename ClassifierType::ValueType> ValueType;
     typedef MinHashMultiClassifier<Q, N, ClassifierType> SelfType;
 
   private:
@@ -51,9 +51,8 @@ namespace colfil {
 
     void classify(const ContainerType &input, ValueType *dest) const
     {
-      dest->clear();
       for (unsigned int i = 0; i < Q; ++i) {
-        (*dest)[classifier[i].classify(input)]++;
+        (*dest)[i] = classifier[i].classify(input);
       }
     }
   };

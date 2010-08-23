@@ -3,7 +3,7 @@
  * @author Ohtaman
  * @brief
  *
- * @date Sat Aug 21 21:47:45 2010 last updated
+ * @date Mon Aug 23 23:14:05 2010 last updated
  * @date Tue Aug 17 23:02:07 2010 created
  */
 
@@ -15,6 +15,11 @@
 namespace colfil {
   template<typename INPUT_T, typename T>
   class Hash{
+  public:
+
+    typedef INPUT_T InputType;
+    typedef T ValueType;
+
   public:
     virtual ~Hash(){}
     virtual T operator()(INPUT_T input) const = 0;
@@ -84,19 +89,19 @@ namespace colfil {
     }
   };
 
-  template<typename T = unsigned int, typename CONTAINER_T = std::list<T>, typename HASH_T = T, typename HASH = Shift32ConstHash>
+  template<typename T = unsigned int, typename CONTAINER_T = std::list<T>, typename HASH = Shift32ConstHash>
   class MinHash : public Hash<const CONTAINER_T&, T>{
   public:
 
     typedef CONTAINER_T ContainerType;
     typedef T ValueType;
-    typedef HASH_T HashValueType;
+    typedef typename HASH::ValueType HashValueType;
     typedef HASH HashType;
-    typedef MinHash<T, CONTAINER_T, HASH_T, HASH> SelfType;
+    typedef MinHash<T, CONTAINER_T, HASH> SelfType;
 
   private:
-    HASH hash_;
-    T seed_;
+    HashType hash_;
+    ValueType seed_;
 
   public:
 
@@ -104,17 +109,17 @@ namespace colfil {
     {
     }
 
-    MinHash(T seed)
+    MinHash(ValueType seed)
       : seed_(seed)
     {
     }
 
-    MinHash(const HASH &hash)
+    MinHash(const HashType &hash)
       : hash_(hash)
     {
     }
 
-    MinHash(const HASH &hash, T seed)
+    MinHash(const HashType &hash, ValueType seed)
       : hash_(hash), seed_(seed)
     {
     }
@@ -136,13 +141,13 @@ namespace colfil {
       return seed_;
     }
 
-    virtual T operator()(const CONTAINER_T &input) const
+    virtual ValueType operator()(const ContainerType &input) const
     {
-      HASH_T min = hash_(*(input.begin())^seed_);
-      T minItem = *(input.begin());
-      T tmp;
+      HashValueType min = hash_(*(input.begin())^seed_);
+      ValueType minItem = *(input.begin());
+      ValueType tmp;
 
-      for (typename CONTAINER_T::const_iterator ite = input.begin(); ite != input.end(); ++ite) {
+      for (typename ContainerType::const_iterator ite = input.begin(); ite != input.end(); ++ite) {
         tmp = hash_(*ite^seed_);
         if (tmp < min) {
           min = tmp;
