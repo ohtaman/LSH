@@ -3,7 +3,7 @@
  * @author Ohtaman
  * @brief
  *
- * @date Mon Aug 23 23:12:25 2010 last updated
+ * @date Sat Sep 11 18:14:34 2010 last updated
  * @date Fri Aug 20 23:47:30 2010 created
  */
 
@@ -15,14 +15,17 @@
 
 namespace colfil {
 
-  template<unsigned int N, typename MIN_HASH = MinHash<> >
+  template<unsigned int N,
+           typename CONTAINER_T,
+           typename MIN_HASH = MinHash<CONTAINER_T>,
+           typename VALUE_T = Array<typename MIN_HASH::ValueType, N> >
   class MinHashClassifier{
   public:
 
-    typedef typename MIN_HASH::ContainerType ContainerType;
+    typedef CONTAINER_T ContainerType;
     typedef MIN_HASH MinHashType;
-    typedef MinHashClassifier<N, MIN_HASH> SelfType;
-    typedef Array<typename MIN_HASH::ValueType, N> ValueType;
+    typedef MinHashClassifier<N, CONTAINER_T> SelfType;
+    typedef VALUE_T ValueType;
 
   private:
 
