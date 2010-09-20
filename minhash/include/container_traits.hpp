@@ -3,7 +3,7 @@
  * @author Ohtaman
  * @brief
  *
- * @date Sat Sep 11 16:09:00 2010 last updated
+ * @date Sun Sep 19 15:02:59 2010 last updated
  * @date Sat Sep 11 15:05:23 2010 created
  */
 
@@ -86,7 +86,18 @@ namespace colfil {
     typedef typename std::map<K, T, C, A>::reverse_iterator ReverseIterator;
     typedef typename std::map<K, T, C, A>::const_reverse_iterator ConstReverseIterator;
 
-    typedef typename std::map<K, T, C, A>::value_type ValueType;
+    typedef typename std::map<K, T, C, A>::key_type KeyType;
+    typedef typename std::map<K, T, C, A>::mapped_type ValueType;
+
+    static KeyType getKey(const ConstIterator &ite)
+    {
+      return ite->first;
+    }
+
+    static ValueType getValue(const ConstIterator &ite)
+    {
+      return ite->second;
+    }
   };
 
   template<>
@@ -98,7 +109,18 @@ namespace colfil {
     typedef typename std::multimap<K, T, C, A>::reverse_iterator ReverseIterator;
     typedef typename std::multimap<K, T, C, A>::const_reverse_iterator ConstReverseIterator;
 
-    typedef typename std::multimap<K, T, C, A>::value_type ValueType;
+    typedef typename std::multimap<K, T, C, A>::key_type KeyType;
+    typedef typename std::multimap<K, T, C, A>::mapped_type ValueType;
+
+    static KeyType getKey(const ConstIterator &ite)
+    {
+      return ite->first;
+    }
+
+    static ValueType getValue(const ConstIterator &ite)
+    {
+      return ite->second;
+    }
   };
 
 }

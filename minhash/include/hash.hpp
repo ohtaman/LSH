@@ -3,7 +3,7 @@
  * @author Ohtaman
  * @brief
  *
- * @date Sat Sep 11 13:03:43 2010 last updated
+ * @date Mon Sep 20 09:11:41 2010 last updated
  * @date Sat Sep 11 13:03:16 2010 created
  */
 
@@ -12,17 +12,35 @@
 
 namespace colfil {
 
-  template<typename INPUT_T, typename T>
+  template<typename INPUT_T, typename VALUE_T>
   class Hash{
   public:
 
     typedef INPUT_T InputType;
-    typedef T ValueType;
+    typedef VALUE_T ValueType;
 
   public:
     virtual ~Hash(){}
-    virtual T operator()(INPUT_T input) const = 0;
+    virtual VALUE_T operator()(INPUT_T input) const = 0;
   };
+
+
+  template<typename HASH,
+           typename INPUT_T = typename HASH::InputType,
+           typename VALUE_T = typename HASH::ValueType>
+  class HashAdaptor : public Hash<INPUT_T, VALUE_T>{
+
+    HASH hash_;
+
+  public:
+
+    VALUE_T operator()(INPUT_T input) const
+    {
+      return (VALUE_T) hash_((typename HASH::InputType)input);
+    }
+  };
+
+
 
   class Shift32Hash : public Hash<int, int>{
   public:

@@ -3,7 +3,7 @@
  * @author Ohtaman
  * @brief
  *
- * @date Sat Sep 11 18:15:49 2010 last updated
+ * @date Mon Sep 20 17:45:33 2010 last updated
  * @date Sat Aug 21 10:51:10 2010 created
  */
 
@@ -11,39 +11,44 @@
 #define COLFIL_MINHASH_MULTI_CLASSIFIER__
 
 #include <cstdlib>
-#include "minhash_classifier.hpp"
+#include "multi_minhash.hpp"
+#include "random.hpp"
 
 namespace colfil {
   template<unsigned int Q,
            unsigned int N,
            typename CONTAINER_T,
-           typename CLASSIFIER_T = MinHashClassifier<N, CONTAINER_T>,
-           typename VALUE_T = Array<typename MinHashClassifier<N, CONTAINER_T>::ValueType, Q> >
+           typename HASH_T = MultiMinHash<N, CONTAINER_T>,
+           typename VALUE_T = Array<typename HASH_T::ValueType, Q>,
+           typename RANDOM_T = NLRandom>
   class MinHashMultiClassifier{
   public:
 
-    typedef CLASSIFIER_T ClassifierType;
-    typedef typename ClassifierType::ValueType ClusterType;
+    typedef HASH_T HashType;
+    typedef typename HashType::ValueType HashValueType;
     typedef CONTAINER_T ContainerType;
     typedef VALUE_T ValueType;
-    typedef MinHashMultiClassifier<Q, N, ContainerType, ClassifierType> SelfType;
+    typedef MinHashMultiClassifier<Q, N, ContainerType, HashType, ValueType> SelfType;
+    typedef RANDOM_T RandomType;
 
   private:
 
-    ClassifierType classifier_[Q];
+    RandomType random_;
+    HashType hash_[Q];
 
   public:
 
-    void shuffle(int seed = 0)
+    void setSeed(int seed)
     {
-      if (seed) {
-        srand(seed);
-      }
+      random_.setSeed(seed);
       for (unsigned int i = 0; i < Q; ++i) {
-        for (unsigned int j = 0; j < classifier_[i].size(); ++j) {
-          classifier_[i].getHash(j).setSeed(rand());
-        }
+        hash_[i].setSeed(random());
       }
+    }
+
+    int getSeed()
+    {
+      return random_.getSeed();
     }
 
     unsigned int size() const
@@ -51,10 +56,10 @@ namespace colfil {
       return Q;
     }
 
-    void classify(const ContainerType &input, ValueType *dest) const
+    void classify(const ContainerType &input, ValueType *output) const
     {
       for (unsigned int i = 0; i < Q; ++i) {
-        (*dest)[i] = classifier_[i].classify(input);
+        (*output)[i] = hash_[i](input);
       }
     }
   };

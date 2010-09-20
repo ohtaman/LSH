@@ -3,7 +3,7 @@
  * @author Ohtaman
  * @brief
  *
- * @date Sat Aug 21 21:44:48 2010 last updated
+ * @date Mon Sep 20 17:10:54 2010 last updated
  * @date Wed Aug 18 00:39:57 2010 created
  */
 
@@ -24,35 +24,15 @@ int main(int argc, char **argv)
 {
   cout << "MinHash Demo" << endl;
 
-  MinHash<> minHash;
+  typedef MinHash<list<unsigned int> > MinHashType;
+  MinHashType minHash;
+  list<unsigned int> user;
 
-  list<list<unsigned int> > users;
-  list<unsigned int> items;
-
-  srand(time(NULL));
-
-  cout << "Generating demo data ... ";
-  cout.flush();
-  for (int i = 0; i < 10000; ++i) {
-    items.clear();
-    for (int j = 0; j < 100; ++j) {
-      items.push_front(rand()%100);
-    }
-    users.push_front(items);
+  for (int i = 0; i < 100; ++i) {
+    user.push_back(i);
   }
-  cout << "O.K." << endl;
 
-  map<unsigned int, unsigned int> hashes;
-  cout << "Calculating minHash values ... ";
-  cout.flush();
-  for (list<list<unsigned int> >::const_iterator ite = users.begin(); ite != users.end(); ++ite) {
-    hashes[minHash(*ite)]++;
-  }
-  cout << "O.K." << endl;
-
-  for (map<unsigned int, unsigned int>::const_iterator ite = hashes.begin(); ite != hashes.end(); ++ite) {
-    cout << (*ite).first << " : " << (*ite).second << endl;
-  }
+  cout << minHash(user) << endl;
 
   return 0;
 }

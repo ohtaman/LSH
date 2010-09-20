@@ -3,7 +3,7 @@
  * @author Ohtaman
  * @brief
  *
- * @date Sat Sep 11 18:13:25 2010 last updated
+ * @date Mon Sep 20 17:28:15 2010 last updated
  * @date Tue Aug 17 23:02:07 2010 created
  */
 
@@ -16,7 +16,7 @@
 
 namespace colfil {
 
-  template<typename CONTAINER_T, typename HASH = Shift32ConstHash>
+  template<typename CONTAINER_T, typename HASH_T = Shift32ConstHash>
   class MinHash : public Hash<const CONTAINER_T&,
                               typename ContainerTraits<CONTAINER_T>::ValueType>{
   public:
@@ -24,9 +24,9 @@ namespace colfil {
     typedef CONTAINER_T ContainerType;
     typedef typename ContainerTraits<ContainerType>::ConstIterator ContainerConstIterator;
     typedef typename ContainerTraits<ContainerType>::ValueType ValueType;
-    typedef typename HASH::ValueType HashValueType;
-    typedef HASH HashType;
-    typedef MinHash<CONTAINER_T, HASH> SelfType;
+    typedef HASH_T HashType;
+    typedef typename HashType::ValueType HashValueType;
+    typedef MinHash<CONTAINER_T, HashType> SelfType;
 
   private:
 
