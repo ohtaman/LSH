@@ -3,18 +3,16 @@
  * @author Ohtaman
  * @brief
  *
- * @date Mon Sep 20 09:59:05 2010 last updated
+ * @date Mon Sep 20 20:46:08 2010 last updated
  * @date Sat Sep 11 15:39:48 2010 created
  */
 
 #ifndef COLFIL_SIMHASH__
 #define COLFIL_SIMHASH__
 
-#include <cstdlib>
-#include <ctime>
-
 #include "hash.hpp"
 #include "container_traits.hpp"
+#include "random.hpp"
 
 namespace colfil {
 
@@ -22,48 +20,61 @@ namespace colfil {
   template<unsigned int N,
            typename CONTAINER_T,
            typename VALUE_T = unsigned long int,
-           typename HASH = HashAdaptor<Shift32ConstHash,
+           typename HASH_T = HashAdaptor<Shift32ConstHash,
                                        typename Shift32ConstHash::InputType,
-                                       signed char> >
+                                         signed char>,
+           typename RANDOM_T = NLRandom>
   class SimHash : public Hash<const CONTAINER_T&, VALUE_T>{
   public:
 
     typedef CONTAINER_T ContainerType;
     typedef VALUE_T ValueType;
-    typedef typename HASH::ValueType HashValueType;
-    typedef HASH HashType;
-    typedef SimHash<N, VALUE_T, CONTAINER_T, HASH> SelfType;
+    typedef typename HASH_T::ValueType HashValueType;
+    typedef HASH_T HashType;
+    typedef SimHash<N, CONTAINER_T, VALUE_T, HASH_T> SelfType;
     typedef ContainerTraits<CONTAINER_T> ContainerTraitsType;
     typedef typename ContainerTraitsType::ConstIterator ContainerConstIterator;
+    typedef RANDOM_T RandomType;
+    typedef typename RandomType::SeedType SeedType;
 
   private:
 
-    HASH hash_;
-    unsigned int seed_;
-    int seeds_[N];
+    HashType hash_;
+    RandomType random_;
+    SeedType seeds_[N];
+
+    void setSeeds()
+    {
+      for (int i = 0; i < N; ++i) {
+        seeds_[i] = random_();
+      }
+    }
 
   public:
 
     SimHash()
     {
-      seed_ = (unsigned int)time(NULL);
-      std::srand(seed_);
-      for (int i = 0; i < N; ++i) {
-        seeds_[i] = std::rand();
-      }
+      setSeeds();
     }
 
-    SimHash(unsigned int seed)
+    SimHash(SeedType seed)
     {
-      seed_ = seed;
-      std::srand(seed);
-      for (int i = 0; i < N; ++i) {
-        seeds_[i] = std::rand();
-      }
+      setSeed(seed);
     }
 
     virtual ~SimHash()
     {
+    }
+
+    void setSeed(SeedType seed)
+    {
+      random_.setSeed(seed);
+      setSeeds();
+    }
+
+    SeedType getSeed() const
+    {
+      return random_.getSeed();
     }
 
     virtual ValueType operator()(const ContainerType &input) const
@@ -72,11 +83,9 @@ namespace colfil {
 
       for (unsigned int i = 0; i < N; ++i) {
         typename ContainerTraitsType::ValueType tmp = 0;
-        typename ContainerTraitsType::ValueType hash = 0;
 
         for (ContainerConstIterator ite = input.begin(); ite != input.end(); ++ite) {
-          hash = hash_(ContainerTraitsType::getKey(ite) + seeds_[i]);
-          tmp += ContainerTraitsType::getValue(ite)*hash;
+          tmp += ContainerTraitsType::getValue(ite)*hash_(ContainerTraitsType::getKey(ite) + seeds_[i]);
         }
 
         result <<= 1;
@@ -87,19 +96,98 @@ namespace colfil {
 
       return result;
     }
+  };
 
-    unsigned int getSeed() const
+
+  /* need to be N <= sizeof(VALUE_T)*8 */
+  template<unsigned int N,
+           typename INPUT_VALUE_T,
+           typename VALUE_T,
+           typename HASH_T,
+           typename RANDOM_T>
+  class SimHash<N, INPUT_VALUE_T*, VALUE_T, HASH_T, RANDOM_T> : public Hash<const INPUT_VALUE_T*, VALUE_T>{
+  public:
+
+    typedef INPUT_VALUE_T InputValueType;
+    typedef InputValueType* InputType;
+    typedef VALUE_T ValueType;
+    typedef typename HASH_T::ValueType HashValueType;
+    typedef HASH_T HashType;
+    typedef SimHash<N, INPUT_VALUE_T, VALUE_T, HASH_T> SelfType;
+    typedef RANDOM_T RandomType;
+    typedef typename RandomType::SeedType SeedType;
+
+  private:
+
+    HashType hash_;
+    RandomType random_;
+    SeedType seeds_[N];
+    int inputDataSize_;
+
+    void setSeeds()
     {
-      return seed_;
+      for (int i = 0; i < N; ++i) {
+        seeds_[i] = random_();
+      }
     }
 
-    void setSeed(unsigned int seed)
+  public:
+
+    SimHash()
+      :inputDataSize_(0)
     {
-      seed_ = seed;
-      std::srand(seed);
-      for (int i = 0; i < N; ++i) {
-        seeds_[i] = std::rand();
+      setSeeds();
+    }
+
+    SimHash(SeedType seed, int inputDataSize = 0)
+      :inputDataSize_(inputDataSize)
+    {
+      setSeed(seed);
+    }
+
+    virtual ~SimHash()
+    {
+    }
+
+    void setSeed(SeedType seed)
+    {
+      random_.setSeed(seed);
+      setSeeds();
+    }
+
+    SeedType getSeed() const
+    {
+      return random_.getSeed();
+    }
+
+    void setInputDataSize(int inputDataSize)
+    {
+      inputDataSize_ = inputDataSize;
+    }
+
+    int getInputDataSize()
+    {
+      return inputDataSize_;
+    }
+
+    virtual ValueType operator()(const InputValueType *input) const
+    {
+      ValueType result = 0;
+
+      for (unsigned int i = 0; i < N; ++i) {
+        InputValueType tmp = 0;
+
+        for (int j = 0; j < inputDataSize_; ++j) {
+          tmp += input[j]*hash_(j + seeds_[i]);
+        }
+
+        result <<= 1;
+        if (tmp > 0) {
+          result |= 0x1;
+        }
       }
+
+      return result;
     }
   };
 

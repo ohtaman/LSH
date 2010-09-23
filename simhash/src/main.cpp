@@ -3,7 +3,7 @@
  * @author Ohtaman
  * @brief
  *
- * @date Mon Sep 20 10:02:45 2010 last updated
+ * @date Mon Sep 20 20:46:26 2010 last updated
  * @date Sun Sep 19 15:48:55 2010 created
  */
 
@@ -21,12 +21,25 @@ int main()
   SimHash<8, map<long, long> > simHash;
   map<long, long> test;
   srand(time(NULL));
+  simHash.setSeed(rand());
 
   for (int i = 0; i < 10; ++i) {
     test[rand()] = rand();
   }
 
   cout << simHash(test) << endl;
+
+
+  SimHash<8, long*> simHash2;
+  simHash2.setInputDataSize(10);
+  long test2[10];
+  simHash2.setSeed(rand());
+
+  for (int i = 0; i < 10; ++i) {
+    test2[i] = rand();
+  }
+
+  cout << simHash2(test2) << endl;
 
   return 0;
 }

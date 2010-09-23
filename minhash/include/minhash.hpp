@@ -3,7 +3,7 @@
  * @author Ohtaman
  * @brief
  *
- * @date Mon Sep 20 23:54:20 2010 last updated
+ * @date Thu Sep 23 12:09:41 2010 last updated
  * @date Tue Aug 17 23:02:07 2010 created
  */
 
@@ -78,7 +78,9 @@ namespace colfil {
       ValueType minItem = *(input.begin());
       ValueType tmp;
 
-      for (ContainerConstIterator ite = input.begin(); ite != input.end(); ++ite) {
+      for (ContainerConstIterator ite = ContainerTraits<ContainerType>::getBegin(input);
+           ite != ContainerTraits<ContainerType>::getEnd(input);
+           ++ite) {
         tmp = hash_(*ite^seed_);
         if (tmp < min) {
           min = tmp;

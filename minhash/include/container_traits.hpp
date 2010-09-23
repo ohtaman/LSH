@@ -3,7 +3,7 @@
  * @author Ohtaman
  * @brief
  *
- * @date Sun Sep 19 15:02:59 2010 last updated
+ * @date Thu Sep 23 10:44:51 2010 last updated
  * @date Sat Sep 11 15:05:23 2010 created
  */
 
@@ -27,74 +27,99 @@ namespace colfil {
     typedef typename T::ConstReverseIterator ConstReverseIterator;
 
     typedef typename T::ValueType ValueType;
+
+    static Iterator getBegin(T &container) {
+      return container.begin();
+    }
+
+    static ConstIterator getBegin(const T &container) {
+      return container.begin();
+    }
+
+    static Iterator getEnd(T &container) {
+      return container.end();
+    }
+
+    static ConstIterator getEnd(const T &container) {
+      return container.end();
+    }
+  };
+
+
+  template<typename T>
+  class STLContainerTraits {
+  public:
+    typedef typename T::iterator Iterator;
+    typedef typename T::const_iterator ConstIterator;
+    typedef typename T::reverse_iterator ReverseIterator;
+    typedef typename T::const_reverse_iterator ConstReverseIterator;
+
+    typedef typename T::value_type ValueType;
+
+    static Iterator getBegin(T &container) {
+      return container.begin();
+    }
+
+    static ConstIterator getBegin(const T &container) {
+      return container.begin();
+    }
+
+    static Iterator getEnd(T &container) {
+      return container.end();
+    }
+
+    static ConstIterator getEnd(const T &container) {
+      return container.end();
+    }
+  };
+
+
+  template<>
+  template<typename T, typename A>
+  class ContainerTraits<std::vector<T, A> >
+    : public STLContainerTraits<std::vector<T, A> >{
+  public:
   };
 
   template<>
   template<typename T, typename A>
-  class ContainerTraits<std::vector<T, A> > {
+  class ContainerTraits<std::list<T, A> >
+    : public STLContainerTraits<std::list<T, A> > {
   public:
-    typedef typename std::vector<T, A>::iterator Iterator;
-    typedef typename std::vector<T, A>::const_iterator ConstIterator;
-    typedef typename std::vector<T, A>::reverse_iterator ReverseIterator;
-    typedef typename std::vector<T, A>::const_reverse_iterator ConstReverseIterator;
-
-    typedef typename std::vector<T, A>::value_type ValueType;
-  };
-
-  template<>
-  template<typename T, typename A>
-  class ContainerTraits<std::list<T, A> > {
-  public:
-    typedef typename std::list<T, A>::iterator Iterator;
-    typedef typename std::list<T, A>::const_iterator ConstIterator;
-    typedef typename std::list<T, A>::reverse_iterator ReverseIterator;
-    typedef typename std::list<T, A>::const_reverse_iterator ConstReverseIterator;
-
-    typedef typename std::list<T, A>::value_type ValueType;
   };
 
   template<>
   template<typename K, typename C, typename A>
-  class ContainerTraits<std::set<K, C, A> > {
+  class ContainerTraits<std::set<K, C, A> >
+    : public STLContainerTraits<std::set<K, C, A> > {
   public:
-    typedef typename std::set<K, C, A>::iterator Iterator;
-    typedef typename std::set<K, C, A>::const_iterator ConstIterator;
-    typedef typename std::set<K, C, A>::reverse_iterator ReverseIterator;
-    typedef typename std::set<K, C, A>::const_reverse_iterator ConstReverseIterator;
-
-    typedef typename std::set<K, C, A>::value_type ValueType;
   };
 
   template<>
   template<typename K, typename C, typename A>
-  class ContainerTraits<std::multiset<K, C, A> > {
+  class ContainerTraits<std::multiset<K, C, A> >
+    : public STLContainerTraits<std::multiset<K, C, A> > {
   public:
-    typedef typename std::multiset<K, C, A>::iterator Iterator;
-    typedef typename std::multiset<K, C, A>::const_iterator ConstIterator;
-    typedef typename std::multiset<K, C, A>::reverse_iterator ReverseIterator;
-    typedef typename std::multiset<K, C, A>::const_reverse_iterator ConstReverseIterator;
-
-    typedef typename std::multiset<K, C, A>::value_type ValueType;
   };
+
 
   template<>
   template<typename K, typename T, typename C, typename A>
-  class ContainerTraits<std::map<K, T, C, A> > {
+  class ContainerTraits<std::map<K, T, C, A> >
+    : public STLContainerTraits<std::map<K, T, C, A> > {
   public:
-    typedef typename std::map<K, T, C, A>::iterator Iterator;
-    typedef typename std::map<K, T, C, A>::const_iterator ConstIterator;
-    typedef typename std::map<K, T, C, A>::reverse_iterator ReverseIterator;
-    typedef typename std::map<K, T, C, A>::const_reverse_iterator ConstReverseIterator;
 
     typedef typename std::map<K, T, C, A>::key_type KeyType;
     typedef typename std::map<K, T, C, A>::mapped_type ValueType;
 
-    static KeyType getKey(const ConstIterator &ite)
+    typedef ContainerTraits<std::map<K, T, C, A> > SelfType;
+
+    static KeyType getKey(const typename SelfType::ConstIterator &ite)
     {
       return ite->first;
     }
 
-    static ValueType getValue(const ConstIterator &ite)
+    static ValueType getValue(const typename SelfType::ConstIterator &ite)
     {
       return ite->second;
     }
@@ -102,22 +127,21 @@ namespace colfil {
 
   template<>
   template<typename K, typename T, typename C, typename A>
-  class ContainerTraits<std::multimap<K, T, C, A> > {
+  class ContainerTraits<std::multimap<K, T, C, A> >
+    : public STLContainerTraits<std::multimap<K, T, C, A> > {
   public:
-    typedef typename std::multimap<K, T, C, A>::iterator Iterator;
-    typedef typename std::multimap<K, T, C, A>::const_iterator ConstIterator;
-    typedef typename std::multimap<K, T, C, A>::reverse_iterator ReverseIterator;
-    typedef typename std::multimap<K, T, C, A>::const_reverse_iterator ConstReverseIterator;
 
     typedef typename std::multimap<K, T, C, A>::key_type KeyType;
     typedef typename std::multimap<K, T, C, A>::mapped_type ValueType;
 
-    static KeyType getKey(const ConstIterator &ite)
+    typedef ContainerTraits<std::multimap<K, T, C, A> > SelfType;
+
+    static KeyType getKey(const typename SelfType::ConstIterator &ite)
     {
       return ite->first;
     }
 
-    static ValueType getValue(const ConstIterator &ite)
+    static ValueType getValue(const typename SelfType::ConstIterator &ite)
     {
       return ite->second;
     }
