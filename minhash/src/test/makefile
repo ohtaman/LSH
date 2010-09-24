@@ -4,11 +4,11 @@ PROGS = $(SRCS:.cpp=)
 HEADS =  ../../include/array.hpp ../../include/minhash.hpp ../../include/minhash_classifier.hpp ../../include/minhash_multi_classifier.hpp
 OBJS = $(SRCS:.cpp=.o)
 
-LD = g++
+LD = g++ -fopenmp
 LDLIBS = -llog4cxx
 
 CXX = g++
-CXXFLAGS = -g -Wall -I../../include
+CXXFLAGS = -fopenmp -g -Wall -I../../include
 
 all: $(PACKAGE)
 

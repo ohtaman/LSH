@@ -3,7 +3,7 @@
  * @author Ohtaman
  * @brief
  *
- * @date Mon Aug 23 23:15:23 2010 last updated
+ * @date Fri Aug 27 16:09:39 2010 last updated
  * @date Sat Aug 21 10:51:10 2010 created
  */
 
@@ -51,6 +51,9 @@ namespace colfil {
 
     void classify(const ContainerType &input, ValueType *dest) const
     {
+#ifdef _OPENMP
+#pragma omp parallel for
+#endif
       for (unsigned int i = 0; i < Q; ++i) {
         (*dest)[i] = classifier[i].classify(input);
       }

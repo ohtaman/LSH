@@ -3,7 +3,7 @@
  * @author Ohtaman
  * @brief
  *
- * @date Mon Aug 23 23:26:21 2010 last updated
+ * @date Fri Aug 27 16:06:47 2010 last updated
  * @date Sat Aug 21 11:04:21 2010 created
  */
 
@@ -12,7 +12,7 @@
 #include <ctime>
 #include <sstream>
 #include <log4cxx/logger.h>
-
+#include <omp.h>
 
 #include "minhash_multi_classifier.hpp"
 
@@ -68,11 +68,13 @@ int main()
   Classifier::ValueType tmpClusters;
   logger->info("clustering users");
   cout << "Clustering users ... " << flush;
-  for (list<Classifier::ContainerType>::const_iterator ite = users.begin(); ite != users.end(); ++ite) {
+
+  list<Classifier::ContainerType>::const_iterator ite;
+  for (ite = users.begin(); ite != users.end(); ++ite) {
     classifier.classify(*ite, &tmpClusters);
     for (Classifier::ValueType::const_iterator ite2 = tmpClusters.begin(); ite2 != tmpClusters.end(); ++ite2) {
       clusters[pair<unsigned int, Classifier::ClusterType>(ite2->first, ite2->second)]++;
-    } 
+    }
   }
   cout << "O.K." << endl;
   logger->info("done");
