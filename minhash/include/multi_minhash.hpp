@@ -3,7 +3,7 @@
  * @author Ohtaman
  * @brief
  *
- * @date Mon Sep 20 23:38:26 2010 last updated
+ * @date Sun Sep 26 00:53:59 2010 last updated
  * @date Mon Sep 20 10:35:43 2010 created
  */
 
@@ -111,16 +111,17 @@ namespace colfil {
 
   template<unsigned int N,
            typename INPUT_VALUE_T,
-           typename MIN_HASH = MinHash<const INPUT_VALUE_T*>,
-           typename VALUE_T = Array<typename MIN_HASH::ValueType, N>,
-           typename RANDOM_T = NLRandom>
-  class MultiMinHash : public Hash<typename MIN_HASH::InputType, VALUE_T>{
+           typename MIN_HASH,
+           typename VALUE_T,
+           typename RANDOM_T>
+  class MultiMinHash<N, const INPUT_VALUE_T*, MIN_HASH, VALUE_T, RANDOM_T>
+    : public Hash<typename MIN_HASH::InputType, VALUE_T>{
   public:
 
-    typedef CONTAINER_T ContainerType;
+    typedef const INPUT_VALUE_T* ContainerType;
     typedef MIN_HASH MinHashType;
     typedef typename MinHashType::ValueType MinHashValueType;
-    typedef MultiMinHash<N, CONTAINER_T, MIN_HASH, VALUE_T, RANDOM_T> SelfType;
+    typedef MultiMinHash<N, const INPUT_VALUE_T*, MIN_HASH, VALUE_T, RANDOM_T> SelfType;
     typedef VALUE_T ValueType;
     typedef RANDOM_T RandomType;
     typedef typename RandomType::SeedType SeedType;
