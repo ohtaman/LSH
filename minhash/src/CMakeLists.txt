@@ -1,3 +1,0 @@
-ADD_EXECUTABLE(minhash main.cpp)
-ADD_EXECUTABLE(multi_minhash multi_minhash.cpp)
-ADD_EXECUTABLE(minhash_multi_classifier minhash_multi_classifier.cpp)

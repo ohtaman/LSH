@@ -3,12 +3,14 @@
  * @author Ohtaman
  * @brief
  *
- * @date Mon Sep 20 09:11:41 2010 last updated
+ * @date Tue Sep 28 00:06:39 2010 last updated
  * @date Sat Sep 11 13:03:16 2010 created
  */
 
 #ifndef COLFIL_HASH__
 #define COLFIL_HASH__
+
+#include <string>
 
 namespace colfil {
 
@@ -103,6 +105,55 @@ namespace colfil {
       input ^= (input>>28);
       input += (input<<31);
       return input;
+    }
+  };
+
+  template<typename HASH_T = Shift32ConstHash>
+  class CStrHash : public Hash<const char*, typename HASH_T::ValueType>{
+
+    HASH_T hash_;
+
+  public:
+
+    typename HASH_T::ValueType operator()(const char *input) const
+    {
+      typedef typename HASH_T::InputType HashInputType;
+
+      HashInputType hashInput = (HashInputType)0;
+      HashInputType tmp;
+      int dataSize = sizeof(hashInput);
+      while (true) {
+        tmp = (HashInputType)0;
+        for (int i = 0; i < dataSize; ++i) {
+          if(*(input + i) == '\0') {
+            input += i;
+            break;
+          }
+          tmp <<= 8;
+          tmp += *(input + i);
+        }
+        hashInput += tmp;
+
+        if (*input == '\0') {
+          break;
+        }
+        input += dataSize;
+      }
+
+      return hash_(hashInput);
+    }
+  };
+
+  template<typename HASH_T = Shift32ConstHash>
+  class StrHash : public Hash<const std::string&, typename HASH_T::ValueType>{
+
+    CStrHash<HASH_T> cStrHash_;
+
+  public:
+
+    typename HASH_T::ValueType operator()(const std::string &input) const
+    {
+      return cStrHash_(input.c_str());
     }
   };
 }
