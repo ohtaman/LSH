@@ -3,11 +3,7 @@
  * @author Ohtaman
  * @brief
  *
-<<<<<<< HEAD
- * @date Tue Sep 21 16:25:03 2010 last updated
-=======
- * @date Thu Sep 23 12:09:41 2010 last updated
->>>>>>> 2d3597aeb51436a5c3d1d9eafedcb16211dcf241
+ * @date Mon Dec 31 01:15:41 2012 last updated
  * @date Tue Aug 17 23:02:07 2010 created
  */
 
